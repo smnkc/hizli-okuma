@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hızlı Okuma Programı</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f7f7f7;
+  }
+  #textArea, #wordsPerMinuteDisplay {
+    width: 90%;
+    max-width: 400px;
+    height: 150px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  .button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    width: 90%;
+    max-width: 200px;
+  }
+  #submit {
+    background-color: #4CAF50;
+  }
+  .speedControl {
+    background-color: #4CAF50; /* Yeşil renk */
+    color: white; /* Beyaz renk yazı */
+}
+  #displayArea {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    min-height: 100px;
+  }
+</style>
+</head>
+<body>
+  <h1>Hızlı Okuma Programı</h1>
+  <textarea id="textArea" placeholder="Metni buraya yapıştırın..."></textarea><br>
+  <button class="button" id="submit">Başlat</button>
+  <button class="button speedControl" id="decreaseSpeed">Hızı Azalt</button>
+  <button class="button speedControl" id="increaseSpeed">Hızı Artır</button>
+  <div id="wordsPerMinuteDisplay">Dakikada Kelime: 300</div>
+  <div id="displayArea"></div>
+
+  <script>
+    var wordsPerMinute = 300;
+    var intervalTime = (60 / wordsPerMinute) * 1000;
+    var displayWPM = document.getElementById('wordsPerMinuteDisplay');
+    var interval;
+    var i;
+    var words;
+
+    function startReading() {
+      var text = document.getElementById('textArea').value.trim();
+      if (text === "") {
+        alert("Lütfen bir metin girin!");
+        return;
+      }
+      words = text.split(/\s+/);
+      var displayArea = document.getElementById('displayArea');
+      displayArea.innerHTML = '';
+      i = 0;
+
+      interval = setInterval(function() {
+        if (i < words.length) {
+          displayArea.innerHTML = words[i];
+          i++;
+        } else {
+          clearInterval(interval);
+          displayArea.innerHTML = 'Okuma tamamlandı!';
+        }
+      }, intervalTime);
+    }
+
+    function updateDisplay() {
+      var displayArea = document.getElementById('displayArea');
+      if (i < words.length) {
+        displayArea.innerHTML = words[i];
+        i++;
+      } else {
+        clearInterval(interval);
+        displayArea.innerHTML = 'Okuma tamamlandı!';
+      }
+    }
+
+    document.getElementById('submit').onclick = startReading;
+
+    document.getElementById('increaseSpeed').onclick = function() {
+      if (wordsPerMinute < 1000) {
+        wordsPerMinute += 50;
+        intervalTime = (60 / wordsPerMinute) * 1000;
+        displayWPM.innerHTML = 'Dakikada Kelime: ' + wordsPerMinute;
+        clearInterval(interval);
+        interval = setInterval(updateDisplay, intervalTime);
+      } else {
+        alert("Hızı daha fazla artıramazsınız!");
+      }
+    };
+
+    document.getElementById('decreaseSpeed').onclick = function() {
+      if (wordsPerMinute > 50) {
+        wordsPerMinute -= 50;
+        intervalTime = (60 / wordsPerMinute) * 1000;
+        displayWPM.innerHTML = 'Dakikada Kelime: ' + wordsPerMinute;
+        clearInterval(interval);
+        interval = setInterval(updateDisplay, intervalTime);
+      } else {
+        alert("Hızı daha fazla azaltamazsınız!");
+      }
+    };
+  </script>
+</body>
+</html>
